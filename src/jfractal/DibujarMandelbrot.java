@@ -41,23 +41,21 @@ public class DibujarMandelbrot extends Thread {
         return Color.BLACK;
     }
     
-    private final Graphics2D g;
+    private final Graphics2D graficos;
     private final Dimension areaPintar;
     private final double x1, y1;
     private final long pixelesXUnidad, iteraciones;
-    private final boolean dibujarCoordenadas;
     private final Color[] paleta;
     
-    public DibujarMandelbrot(Graphics2D g, Dimension areaPintar, double x1, double y1, long pixelesXUnidad, long iteraciones, Color[] paleta, boolean dibujarCoordenadas) {
+    public DibujarMandelbrot(Graphics2D graficos, Dimension areaPintar, double x1, double y1, long pixelesXUnidad, long iteraciones, Color[] paleta) {
         
-        this.g = g;
+        this.graficos = graficos;
         this.areaPintar = areaPintar;
         this.x1 = x1;
         this.y1 = y1;
         this.pixelesXUnidad = pixelesXUnidad;
         this.iteraciones = iteraciones;
         this.paleta = paleta;
-        this.dibujarCoordenadas = dibujarCoordenadas;
     }
     
     @Override
@@ -67,21 +65,8 @@ public class DibujarMandelbrot extends Thread {
         for(y = 0; y < areaPintar.getHeight(); y++) for(x = 0; x < areaPintar.getWidth(); x++) {
             
             if(Thread.currentThread().isInterrupted()) break;
-            g.setColor(colorMandelbrot(new Complejo(x1 + (double)x / pixelesXUnidad, y1 + (double)y / pixelesXUnidad), iteraciones, paleta));
-            g.drawLine(x, y, x, y);
-        }
-        
-        if(dibujarCoordenadas) {
-            
-            g.setColor(new Color(0xC07F7F7F, true));
-            g.fillRect(10, 35, 215, 65);
-            Font fuente = new Font(g.getFont().getFontName(), Font.BOLD, 16);
-            g.setFont(fuente);
-            g.setColor(Color.WHITE);
-            g.drawString("X = " + String.valueOf(x1), 15, 50);
-            g.drawString("Y = " + String.valueOf(y1), 15, 65);
-            g.drawString("PPU = " + String.valueOf(pixelesXUnidad), 15, 80);
-            g.drawString(String.valueOf(iteraciones) + " iteraciones", 15, 95);
+            graficos.setColor(colorMandelbrot(new Complejo(x1 + (double)x / pixelesXUnidad, y1 + (double)y / pixelesXUnidad), iteraciones, paleta));
+            graficos.drawLine(x, y, x, y);
         }
     }
 }
