@@ -32,8 +32,18 @@ public class DibujarFuncionCompleja extends Thread {
     private final Color[] paleta;
     private final int[] alphas;
     private static Complejo i = new Complejo(0,1);
+    private final boolean col, conmutado;
     
-    public DibujarFuncionCompleja(Graphics2D graficos, Dimension areaPintar, double x1, double y1, long pixelesXUnidad, long iteraciones, long r[], Color[] paleta, int[] alphas) {
+    public DibujarFuncionCompleja(  Graphics2D graficos,
+                                    Dimension areaPintar,
+                                    double x1, double y1,
+                                    long pixelesXUnidad,
+                                    long iteraciones,
+                                    long r[],
+                                    Color[] paleta,
+                                    int[] alphas,
+                                    boolean col,
+                                    boolean conmutado) {
         
         this.graficos = graficos;
         this.areaPintar = areaPintar;
@@ -44,6 +54,8 @@ public class DibujarFuncionCompleja extends Thread {
         this.paleta = paleta;
         this.alphas = alphas;
         this.r = r;
+        this.col = col;
+        this.conmutado = conmutado;
     }
     
     public static long CoeficienteBinomial(long t, long r){
@@ -281,22 +293,20 @@ public class DibujarFuncionCompleja extends Thread {
             
             Complejo func;
             
-            func = valor.arccsc(r[0]/100d, r[1]/100d);
+            func = valor.inverso().sen();
             
-            /*
-            
-            ig2.setColor(func.colorFondo(alphas));
-            ig2.drawLine(x, y, x, y);
-            
-            ig2.setColor(func.colorCurvas(paleta,alphas));
-            ig2.drawLine(x, y, x, y);
-            
-            /**/
-            
-            ig2.setColor(func.colorHSL(true));
-            ig2.drawLine(x, y, x, y);
-            
-            /**/
+            if(!col){
+                graficos.setColor(func.colorHSL(conmutado));
+                graficos.drawLine(x, y, x, y);
+            }
+            else{
+                
+                ig2.setColor(func.colorFondo(alphas));
+                ig2.drawLine(x, y, x, y);
+
+                ig2.setColor(func.colorCurvas(paleta,alphas));
+                ig2.drawLine(x, y, x, y);
+            }
             
         }
         // Paint the buffer

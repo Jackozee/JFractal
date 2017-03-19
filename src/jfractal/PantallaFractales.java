@@ -46,6 +46,7 @@ public class PantallaFractales extends JFrame {
     Thread hiloDibujar;
     Color[] paleta;
     int[] alphas;
+    boolean col = false, conmutado = false;
     
     public static Color[] crearPaletaStandar(int numColores) {
         
@@ -91,7 +92,7 @@ public class PantallaFractales extends JFrame {
                 System.err.println(ex);
             }
         }
-        hiloDibujar = new DibujarFuncionCompleja((Graphics2D)getGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, r, paleta, alphas);
+        hiloDibujar = new DibujarFuncionCompleja((Graphics2D)getGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, r, paleta, alphas, col, conmutado);
       //hiloDibujar = new DibujarMandelbrot((Graphics2D)getGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, paleta);
         hiloDibujar.start();
     }
@@ -115,6 +116,8 @@ public class PantallaFractales extends JFrame {
                 if(e.getKeyCode() == KeyEvent.VK_S) { r[1] -= 1; repaint(); }
                 if(e.getKeyCode() == KeyEvent.VK_E) { r[2] += 1; repaint(); }
                 if(e.getKeyCode() == KeyEvent.VK_D) { r[2] -= 1; repaint(); }
+                if(e.getKeyCode() == KeyEvent.VK_Z) { col = !col; repaint(); }
+                if(e.getKeyCode() == KeyEvent.VK_X) { conmutado = !conmutado; repaint(); }
                 if(e.getKeyCode() == KeyEvent.VK_PLUS) { iteraciones += e.isShiftDown() ? e.isControlDown() ? e.isAltDown() ? 500 : 50 : 10 : 1; repaint(); }
                 if(e.getKeyCode() == KeyEvent.VK_MINUS) { iteraciones -= e.isShiftDown() ? e.isControlDown() ? e.isAltDown() ? 500 : 50 : 10 : 1; repaint(); }
                 if(e.getKeyCode() == KeyEvent.VK_P) {
@@ -123,7 +126,7 @@ public class PantallaFractales extends JFrame {
                         
                         setTitle(nombre + " - Guardando - " + String.valueOf(iteraciones) + " iteraciones" + " - R1 = " + String.valueOf(r[0]) + " R2 = " + String.valueOf(r[1]) + " R3 = " + String.valueOf(r[2]));
                         BufferedImage guardar = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-                        Thread hiloGuardar = new DibujarFuncionCompleja(guardar.createGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, r, paleta, alphas);
+                        Thread hiloGuardar = new DibujarFuncionCompleja(guardar.createGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, r, paleta, alphas, col, conmutado);
                       //Thread hiloGuardar = new DibujarMandelbrot(guardar.createGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, paleta);
                         hiloGuardar.start();
                         hiloGuardar.join();
