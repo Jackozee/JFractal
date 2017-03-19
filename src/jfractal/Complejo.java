@@ -144,15 +144,46 @@ public class Complejo {
     public Complejo imaginario(){ return new Complejo(0,imaginario); }
     
     //-------------------------función para pintar------------------------------
-    
-    public Colorcirijillo aPixel(Color[] paleta, int[] alphas){
+    public Color colorFondo(int[] alphas){
+        int pos = (int)((((Math.pow(Math.E, 8)*Math.log(modulo()+1))%alphas.length)/alphas.length)*alphas.length);
+        if(pos>384) return Color.WHITE;
+        else return Color.BLACK;
+    }
+    public Color colorCurvas(Color[] paleta, int[] alphas){
         
         Color temp = paleta[ (int)((anguloPositivo()*(paleta.length-1))/(2*Math.PI))  ];
         int pos = (int)((((Math.pow(Math.E, 8)*Math.log(modulo()+1))%alphas.length)/alphas.length)*alphas.length);
-        int alpha = alphas[alphas.length - 1 - pos];    
+        int alpha = alphas[alphas.length - 1 - pos];
         
-        Color nuevo = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), alpha);
-        if(pos>384) return new Colorcirijillo(nuevo, Color.WHITE);
-        else return new Colorcirijillo(nuevo, Color.BLACK);
+        return new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), alpha);
+    }
+    public Color colorHSL() {
+        double saturacion = 1;
+        double iluminacion = Math.pow(2, -modulo());
+        double angulo = anguloPositivo();
+        if(angulo < 0) angulo += Math.PI * 2;
+        double C = (1 - Math.abs(2 * iluminacion - 1)) * saturacion;
+        double X = C * (1 - Math.abs((angulo * 3 / Math.PI) % 2 - 1));
+        double m = iluminacion - C / 2;
+        Color sinBrillo = new Color(
+            (float)(
+                angulo < Math.PI / 3 || angulo >= Math.PI * 5 / 3 ? C :
+                angulo < Math.PI * 2 / 3 || angulo >= Math.PI * 4 / 3 ? X : 0
+            ),
+            (float)(
+                angulo >= Math.PI / 3 && angulo < Math.PI ? C :
+                angulo >= Math.PI * 4 / 3 ? 0 : X
+            ),
+            (float)(
+                angulo >= Math.PI && angulo < Math.PI * 5 / 3 ? C :
+                angulo < Math.PI * 2 / 3 ? 0 : X
+            )
+        );
+        
+        return new Color(
+            (int)(sinBrillo.getRed() + m * 255),
+            (int)(sinBrillo.getGreen() + m * 255),
+            (int)(sinBrillo.getBlue() + m * 255)
+        );
     }
 }

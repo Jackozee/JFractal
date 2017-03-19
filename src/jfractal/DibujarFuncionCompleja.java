@@ -58,7 +58,7 @@ public class DibujarFuncionCompleja extends Thread {
         return (d/a);
     }
     
-    public static Colorcirijillo FuncionZeta(Complejo inicial, long iteraciones, Color[] paleta, int[] alphas) {
+    public static Complejo FuncionZeta(Complejo inicial, long iteraciones, Color[] paleta, int[] alphas) {
         
         Complejo termino;
         Complejo fin = new Complejo();
@@ -71,10 +71,10 @@ public class DibujarFuncionCompleja extends Thread {
             fin = fin.mas(termino);
         }
         
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
     
-    public static Colorcirijillo FuncionZetaRiemann(Complejo inicial, long iteraciones, Color[] paleta, int[] alphas) {
+    public static Complejo FuncionZetaRiemann(Complejo inicial, long iteraciones, Color[] paleta, int[] alphas) {
         
         Complejo factor;
         factor = new Complejo(1).entre(new Complejo(1).menos(new Complejo(1).menos(inicial).expReal((double)2)));
@@ -97,10 +97,10 @@ public class DibujarFuncionCompleja extends Thread {
         }
         Complejo fin = sum_ex.por(factor);
         
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
     
-    public static Colorcirijillo FuncionMafufa1(Complejo z, long iteraciones, Color[] paleta, int[] alphas) {
+    public static Complejo FuncionMafufa1(Complejo z, long iteraciones, Color[] paleta, int[] alphas) {
         
         /*
             Dibuja   (z^2 - 1)(z - 2 - i)^2
@@ -112,10 +112,10 @@ public class DibujarFuncionCompleja extends Thread {
         Complejo fin;
         fin = z.aLa(2).menos(new Complejo(1)).por( z.menos(new Complejo(2,1)).aLa(2) ).entre( z.aLa(2).mas(new Complejo(2,2)) );
         
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
     
-    public static Colorcirijillo FuncionMafufa2(Complejo z, long iteraciones, Color[] paleta, int[] alphas) {
+    public static Complejo FuncionMafufa2(Complejo z, long iteraciones, Color[] paleta, int[] alphas) {
         
         /*
             Dibuja   (z^2 - 1)(z - 2 - i)^2
@@ -128,10 +128,10 @@ public class DibujarFuncionCompleja extends Thread {
         fin = z.aLa(2).menos(new Complejo(1)).por( z.menos(new Complejo(2,1)).aLa(2) );
         fin = fin.entre( z.aLa(2).mas(new Complejo(2,2)) );
         
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
     
-    public static Colorcirijillo FuncionMafufa3(Complejo z, long iteraciones, Color[] paleta, int[] alphas) {
+    public static Complejo FuncionMafufa3(Complejo z, long iteraciones, Color[] paleta, int[] alphas) {
         
         Complejo fin;
         
@@ -149,10 +149,10 @@ public class DibujarFuncionCompleja extends Thread {
         fin = fin.entre( z.aLa(4).mas( z.aLa(2).por(new Complejo(4,4)) ).mas(new Complejo(0,8)) );
         fin = fin.por(new Complejo(2));
         
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
     
-    public static Colorcirijillo FuncionMafufa4(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
+    public static Complejo FuncionMafufa4(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
         
         /* dibuja la función:
          *   (z^2-i)    num = numerador
@@ -164,10 +164,10 @@ public class DibujarFuncionCompleja extends Thread {
         num = z.aLa(2).menos(new Complejo(0,1));
         den = z.aLa(2).mas(new Complejo(0,1)).por(new Complejo(2));
         fin = num.entre(den);
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
     
-    public static Colorcirijillo FuncionMafufa4Derivada(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
+    public static Complejo FuncionMafufa4Derivada(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
         
         /* dibuja la función:
          *      2iz           num = numerador
@@ -181,10 +181,10 @@ public class DibujarFuncionCompleja extends Thread {
         den = z.aLa(2).mas(new Complejo(0,1)).aLa(2);
         fin = num.entre(den);
         
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
     
-    public static Colorcirijillo FuncionMafufa5(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
+    public static Complejo FuncionMafufa5(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
         
         /* dibuja la función:
          *      2iz           num = numerador
@@ -199,10 +199,10 @@ public class DibujarFuncionCompleja extends Thread {
         fin = num.entre(den);
         fin = fin.menos(new Complejo(0.5));
         
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
     
-    public static Colorcirijillo FuncionMafufa5Derivada(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
+    public static Complejo FuncionMafufa5Derivada(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
         
         /* dibuja la función:
          *     -i8z          num = numerador
@@ -216,10 +216,10 @@ public class DibujarFuncionCompleja extends Thread {
         den = z.aLa(2).mas(i).aLa(3);
         fin = num.entre(den);
         
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
     
-    public static Colorcirijillo FuncionMafufa6(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
+    public static Complejo FuncionMafufa6(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
         
         /* dibuja la función:
          *      2z            num = numerador
@@ -233,10 +233,10 @@ public class DibujarFuncionCompleja extends Thread {
         den = z.aLa(2).mas(new Complejo(0,1)).aLa(2);
         fin = num.entre(den);
         
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
     
-    public static Colorcirijillo FuncionMafufa7(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
+    public static Complejo FuncionMafufa7(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
         
         /* dibuja la función:
          *      z^3 - 2z       num = numerador
@@ -246,10 +246,10 @@ public class DibujarFuncionCompleja extends Thread {
         
         fin = z.aLa(3).menos(z.por(new Complejo(2)));
         
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
     
-    public static Colorcirijillo FuncionMafufa8(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
+    public static Complejo FuncionMafufa8(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
         
         /* dibuja la función:
          *   z+1    num = numerador
@@ -263,9 +263,8 @@ public class DibujarFuncionCompleja extends Thread {
         den = z.menos(new Complejo(1));
         fin = num.entre(den);
         
-        return fin.aPixel(paleta, alphas);
+        return fin;
     }
-    
     @Override
     public void run() {
         
@@ -280,16 +279,18 @@ public class DibujarFuncionCompleja extends Thread {
             
             Complejo valor = new Complejo(x1 + (double)x / pixelesXUnidad, y1 - (double)y / pixelesXUnidad);
             
-            Colorcirijillo wea;
-            //wea = FuncionMafufa5Derivada(valor, iteraciones, paleta, alphas);
+            Complejo func;
             
-            wea = valor.arcsec(r[0]/100d, r[1]/100d).aPixel(paleta, alphas);
+            func = valor.arcsec(r[0]/100d, r[1]/100d);
             
-            ig2.setColor(wea.fondo);
+            ig2.setColor(func.colorFondo(alphas));
             ig2.drawLine(x, y, x, y);
             
-            ig2.setColor(wea.nuevo);
+            ig2.setColor(func.colorCurvas(paleta,alphas));
             ig2.drawLine(x, y, x, y);
+            
+            //ig2.setColor(func.colorHSL());
+            //ig2.drawLine(x, y, x, y);
             
         }
         // Paint the buffer
