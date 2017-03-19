@@ -40,7 +40,7 @@ public class PantallaFractales extends JFrame {
         });
     }
     
-    long pixelesXUnidad = 50, iteraciones = 5;
+    long pixelesXUnidad = 50, iteraciones = 0, r[] = {0,0,0};
     double x1 = -4d, y1 = 5;
     String nombre = "Mapeos complejos";
     Thread hiloDibujar;
@@ -82,7 +82,7 @@ public class PantallaFractales extends JFrame {
     @Override
     public void paint(Graphics g) {
         
-        setTitle(nombre + " - " + String.valueOf(iteraciones) + " iteraciones");
+        setTitle(nombre + " - " + String.valueOf(iteraciones) + " iteraciones" + " - R1 = " + String.valueOf(r[0]) + " R2 = " + String.valueOf(r[1]) + " R3 = " + String.valueOf(r[2]));
         if(hiloDibujar != null) if(hiloDibujar.isAlive()) {
             try {
                 hiloDibujar.interrupt();
@@ -91,7 +91,7 @@ public class PantallaFractales extends JFrame {
                 System.err.println(ex);
             }
         }
-        hiloDibujar = new DibujarFuncionCompleja((Graphics2D)getGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, paleta, alphas);
+        hiloDibujar = new DibujarFuncionCompleja((Graphics2D)getGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, r, paleta, alphas);
       //hiloDibujar = new DibujarMandelbrot((Graphics2D)getGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, paleta);
         hiloDibujar.start();
     }
@@ -109,20 +109,26 @@ public class PantallaFractales extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 
+                if(e.getKeyCode() == KeyEvent.VK_Q) { r[0] += 1; repaint(); }
+                if(e.getKeyCode() == KeyEvent.VK_A) { r[0] -= 1; repaint(); }
+                if(e.getKeyCode() == KeyEvent.VK_W) { r[1] += 1; repaint(); }
+                if(e.getKeyCode() == KeyEvent.VK_S) { r[1] -= 1; repaint(); }
+                if(e.getKeyCode() == KeyEvent.VK_E) { r[2] += 1; repaint(); }
+                if(e.getKeyCode() == KeyEvent.VK_D) { r[2] -= 1; repaint(); }
                 if(e.getKeyCode() == KeyEvent.VK_PLUS) { iteraciones += e.isShiftDown() ? e.isControlDown() ? e.isAltDown() ? 500 : 50 : 10 : 1; repaint(); }
                 if(e.getKeyCode() == KeyEvent.VK_MINUS) { iteraciones -= e.isShiftDown() ? e.isControlDown() ? e.isAltDown() ? 500 : 50 : 10 : 1; repaint(); }
                 if(e.getKeyCode() == KeyEvent.VK_P) {
 
                     try {
                         
-                        setTitle(nombre + " - Guardando - " + String.valueOf(iteraciones) + " iteraciones");
+                        setTitle(nombre + " - Guardando - " + String.valueOf(iteraciones) + " iteraciones" + " - R1 = " + String.valueOf(r[0]) + " R2 = " + String.valueOf(r[1]) + " R3 = " + String.valueOf(r[2]));
                         BufferedImage guardar = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-                        Thread hiloGuardar = new DibujarFuncionCompleja(guardar.createGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, paleta, alphas);
+                        Thread hiloGuardar = new DibujarFuncionCompleja(guardar.createGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, r, paleta, alphas);
                       //Thread hiloGuardar = new DibujarMandelbrot(guardar.createGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, paleta);
                         hiloGuardar.start();
                         hiloGuardar.join();
                         ImageIO.write(guardar, "png", new File(new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss").format(new java.util.Date()) + ".png"));
-                        setTitle(nombre + " - " + String.valueOf(iteraciones) + " iteraciones");
+                        setTitle(nombre + " - " + String.valueOf(iteraciones) + " iteraciones" + " - R1 = " + String.valueOf(r[0]) + " R2 = " + String.valueOf(r[1]) + " R3 = " + String.valueOf(r[2]));
                     }
                     catch(IOException | InterruptedException ex) {
                         

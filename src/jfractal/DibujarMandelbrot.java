@@ -32,8 +32,8 @@ public class DibujarMandelbrot extends Thread {
         for(c = 0; c < iteraciones; c++) {
             
             if(Thread.currentThread().isInterrupted()) break;
-            valor.multiplicar(valor);
-            valor.sumar(inicial);
+            valor = valor.por(valor);
+            valor = valor.mas(inicial);
             
             if(Math.sqrt(valor.real * valor.real + valor.imaginario * valor.imaginario) > 2) return paleta[(int)(c % paleta.length)];
         }

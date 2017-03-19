@@ -50,107 +50,106 @@ public class Complejo {
         imaginario = origen.imaginario;
     }
     
-    //--------------------------funciones que modifican el valor----------------
+    //--------------------------propiedades dinámicas---------------------------
     
-    public void sumar(Complejo a) {
-        
-        real += a.real;
-        imaginario += a.imaginario;
+    public double modulo() { return Math.sqrt(real * real + imaginario * imaginario); }
+    public double anguloPositivo(){
+        double cos = real/modulo(); //cateto adyacente entre hipotenusa
+        if(imaginario == 0 && real > 0) return 0;
+        if(imaginario == 0 && real < 0) return Math.PI;
+        return (imaginario > 0) ? Math.acos(cos) : 2*Math.PI - Math.acos(cos);
     }
-    
-    public void restar(Complejo a) {
-        
-        real -= a.real;
-        imaginario -= a.imaginario;
-    }
-    
-    public void multiplicar(Complejo a) {
-        
-        Complejo resultado = new Complejo(real * a.real - imaginario * a.imaginario, real * a.imaginario + imaginario * a.real);
-        real = resultado.real;
-        imaginario = resultado.imaginario;
+    public double anguloNeutro(){
+        double cos = real/modulo(); //cateto adyacente entre hipotenusa
+        if(imaginario == 0 && real > 0) return 0;
+        if(imaginario == 0 && real < 0) return - Math.PI;
+        return (imaginario > 0) ? Math.acos(cos) : - Math.acos(cos);
     }
     
-    public void dividir(Complejo a) {
-        
-        Complejo inverso = new Complejo(a.real/(a.real*a.real + a.imaginario*a.imaginario), - a.imaginario/(a.real*a.real + a.imaginario*a.imaginario));
-        
-        Complejo resultado = new Complejo(real * inverso.real - imaginario * inverso.imaginario, real * inverso.imaginario + imaginario * inverso.real);
-        real = resultado.real;
-        imaginario = resultado.imaginario;
+    //---------------------------funciones básicas------------------------------
+    public Complejo mas(double a) { return mas(new Complejo(a)); }
+    public Complejo mas(Complejo a) { return new Complejo(real + a.real, imaginario + a.imaginario); }
+    public Complejo menos(double a) { return menos(new Complejo(a)); }
+    public Complejo menos(Complejo a) { return new Complejo(real - a.real, imaginario - a.imaginario); }
+    public Complejo por(double a) { return por(new Complejo(a)); }
+    public Complejo por(Complejo a) { return new Complejo(real * a.real - imaginario * a.imaginario, real * a.imaginario + imaginario * a.real); }
+    public Complejo entre(double a) { return entre(new Complejo(a)); }
+    public Complejo entre(Complejo a) { return this.por(a.inverso()); }
+    
+    public Complejo Exp() { return new Complejo( Math.pow(Math.E, real) * Math.cos(imaginario) , Math.pow(Math.E, real) * Math.sin(imaginario) ); }
+    
+    public Complejo sen() { return ( this.por(new Complejo(0,1)).Exp().menos(this.por(new Complejo(0,-1)).Exp()) ).entre(new Complejo(0,2)); }
+    public Complejo cos() { return ( this.por(new Complejo(0,1)).Exp().mas(this.por(new Complejo(0,-1)).Exp()) ).entre(2); }
+    public Complejo tan() { return sen().entre(cos()); }
+    public Complejo cosh() { return ( this.Exp().mas(this.por(-1).Exp()) ).entre(2); }
+    public Complejo senh() { return ( this.Exp().menos(this.por(-1).Exp()) ).entre(2); }
+    public Complejo tanh() { return ( senh().entre(cosh())); }
+    
+    public Complejo csc() { return sen().inverso(); }
+    public Complejo sec() { return cos().inverso(); }
+    public Complejo cot() { return cos().entre(sen()); }
+    public Complejo sech() { return cosh().inverso(); }
+    public Complejo csch() { return senh().inverso(); }
+    public Complejo coth() { return cosh().entre(senh()); }
+    
+    public Complejo arcsen() { return arcsen(0,0); }
+    public Complejo arcsen(double ramaRaiz, double ramaLog){
+        return (this.por(new Complejo(0,1)).mas( new Complejo(1).menos(this.aLa(2)).aLa(new Complejo(.5), ramaRaiz) )).log(ramaLog).por(new Complejo(0,-1));
+    }
+    public Complejo arccos() { return arccos(0,0); }
+    public Complejo arccos(double ramaRaiz, double ramaLog){
+        return (this.mas( this.aLa(2).menos(1).aLa(new Complejo(.5), ramaRaiz) )).log(ramaLog).por(new Complejo(0,-1));
+    }
+    public Complejo arctan() { return arctan(0); }
+    public Complejo arctan(double ramaLog){
+        return new Complejo(1).mas(this.por(new Complejo(0,1))).entre(new Complejo(1).menos(this.por(new Complejo(0,1)))).log(ramaLog).por(new Complejo(0,-0.5));
+    }
+    public Complejo arccsc() { return arccsc(0,0); }
+    public Complejo arccsc(double ramaRaiz, double ramaLog){
+        return this.inverso().arcsen(ramaRaiz, ramaLog);
+    }
+    public Complejo arcsec() { return arcsec(0,0); }
+    public Complejo arcsec(double ramaRaiz, double ramaLog){
+        return this.inverso().arccos(ramaRaiz, ramaLog);
+    }
+    public Complejo arccot() { return arccot(0); }
+    public Complejo arccot(double ramaLog){
+        return this.inverso().arctan(ramaLog);
     }
     
-    public void potenciaDeBaseReal(Double a) {
-        if(a == 0){
-            real = 0;
-            imaginario = 0;
-        }
-        else{
-            Complejo resultado = new Complejo( Math.pow(Math.E, real * Math.log(a)) * Math.cos(imaginario * Math.log(a)) , Math.pow(Math.E, real * Math.log(a)) * Math.sin(imaginario * Math.log(a)) );
-            real = resultado.real;
-            imaginario = resultado.imaginario;
-        }
+    public Complejo expReal(Double a) {
+        if(a == 0) return new Complejo();
+        return new Complejo( Math.pow(Math.E, real * Math.log(a)) * Math.cos(imaginario * Math.log(a)) , Math.pow(Math.E, real * Math.log(a)) * Math.sin(imaginario * Math.log(a)) );
     }
     
-    public void elevarAEntero (int a){
-        Complejo resultado = this.aLa(a);
-        this.real = resultado.real;
-        this.imaginario = resultado.imaginario;
+    public Complejo log(){ return new Complejo(Math.log(modulo()), anguloNeutro()); }
+    public Complejo log(int rama){ return new Complejo(Math.log(modulo()), anguloNeutro() + 2 * Math.PI * rama); }
+    public Complejo log(Double rama){
+        Double min = rama*Math.PI*2 - Math.PI ;
+        Double max = min + Math.PI*2;
+        Double ang = anguloNeutro();
+        while(ang <= min) ang += Math.PI*2;
+        while(ang > max) ang -= Math.PI*2;
+        return new Complejo(Math.log(modulo()), ang);
     }
     
-    //---------------------------funciones encadenables-------------------------
+    public Complejo aLa(int potencia) { return aLa(new Complejo(potencia)); }
+    public Complejo aLa(Complejo z) { return z.por(log()).Exp(); }
+    public Complejo aLa(Complejo z, double rama){ return z.por(this.log(rama)).Exp(); }
     
-    public Complejo mas(Complejo a) {
-        Complejo resultado = new Complejo(real + a.real, imaginario + a.imaginario);
-        return resultado;
-    }
-    public Complejo menos(Complejo a) {
-        Complejo resultado = new Complejo(real - a.real, imaginario - a.imaginario);
-        return resultado;
-    }
-    public Complejo por(Complejo a) {
-        Complejo resultado = new Complejo(real * a.real - imaginario * a.imaginario, real * a.imaginario + imaginario * a.real);
-        return resultado;
-    }
-    public Complejo entre(Complejo a) {
-        Complejo inverso = a.inverso();
-        Complejo resultado = this.por(inverso);
-        return resultado;
-    }
-    public Complejo elevandoBaseReal(Double a) {
-        if(a == 0){
-            return new Complejo(0,0);
-        }
-        else{
-            Complejo resultado = new Complejo( Math.pow(Math.E, real * Math.log(a)) * Math.cos(imaginario * Math.log(a)) , Math.pow(Math.E, real * Math.log(a)) * Math.sin(imaginario * Math.log(a)) );
-            return resultado;
-        }
-    }
-    public Complejo aLa (int a){
-        if(a == 0) return new Complejo(1);
-        
-        Complejo inicial = new Complejo(this);
-        Complejo resultado = new Complejo(real,imaginario);
-        
-        for(int i = 1; i < a; i++) resultado.multiplicar(inicial);
-        
-        if(a > 0) return resultado;
-        else return resultado.inverso();
-
-    }
-    public Complejo inverso(){
-        Complejo resultado = new Complejo(real/(real*real + imaginario*imaginario), - imaginario/(real*real + imaginario*imaginario));
-        return resultado;
-    }
+    public Complejo inverso() { return new Complejo(real/(real*real + imaginario*imaginario), - imaginario/(real*real + imaginario*imaginario)); }
+    //----------------------funciones de extracción-----------------------------
+    
+    public Complejo real(){ return new Complejo(real); }
+    public Complejo imaginario(){ return new Complejo(0,imaginario); }
+    
+    //-------------------------función para pintar------------------------------
+    
     public Colorcirijillo aPixel(Color[] paleta, int[] alphas){
         
-        double r, ang;
-        r = Math.sqrt(real * real + imaginario * imaginario);
-        double cos = real/r;
-        ang = (imaginario > 0) ? Math.acos(cos) : 2*Math.PI - Math.acos(cos);
-        Color temp = paleta[ (int)((ang*(paleta.length-1))/(2*Math.PI))  ];
-        int pos = (int)((((Math.pow(Math.E, 8)*Math.log(r+1))%alphas.length)/alphas.length)*alphas.length);
-        int alpha = alphas[alphas.length-1-pos];
+        Color temp = paleta[ (int)((anguloPositivo()*(paleta.length-1))/(2*Math.PI))  ];
+        int pos = (int)((((Math.pow(Math.E, 8)*Math.log(modulo()+1))%alphas.length)/alphas.length)*alphas.length);
+        int alpha = alphas[alphas.length - 1 - pos];    
         
         Color nuevo = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), alpha);
         if(pos>384) return new Colorcirijillo(nuevo, Color.WHITE);
