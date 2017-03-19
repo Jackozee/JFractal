@@ -157,9 +157,10 @@ public class Complejo {
         
         return new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), alpha);
     }
-    public Color colorHSL() {
+    public Color colorHSL(){ return colorHSL(false); }
+    public Color colorHSL(boolean switched) {
         double saturacion = 1;
-        double iluminacion = Math.pow(2, -modulo());
+        double iluminacion = switched ? 1 - Math.pow(2, -modulo()) : Math.pow(2, -modulo());
         double angulo = anguloPositivo();
         if(angulo < 0) angulo += Math.PI * 2;
         double C = (1 - Math.abs(2 * iluminacion - 1)) * saturacion;

@@ -281,7 +281,9 @@ public class DibujarFuncionCompleja extends Thread {
             
             Complejo func;
             
-            func = valor.arcsec(r[0]/100d, r[1]/100d);
+            func = valor.arccsc(r[0]/100d, r[1]/100d);
+            
+            /*
             
             ig2.setColor(func.colorFondo(alphas));
             ig2.drawLine(x, y, x, y);
@@ -289,8 +291,12 @@ public class DibujarFuncionCompleja extends Thread {
             ig2.setColor(func.colorCurvas(paleta,alphas));
             ig2.drawLine(x, y, x, y);
             
-            //ig2.setColor(func.colorHSL());
-            //ig2.drawLine(x, y, x, y);
+            /**/
+            
+            ig2.setColor(func.colorHSL(true));
+            ig2.drawLine(x, y, x, y);
+            
+            /**/
             
         }
         // Paint the buffer
