@@ -82,21 +82,23 @@ public class Complejo {
     public Complejo log(){ return new Complejo(Math.log(modulo()), anguloNeutro()); }
     public Complejo log(int rama){ return new Complejo(Math.log(modulo()), anguloNeutro() + 2 * Math.PI * rama); }
     public Complejo log(Double rama){
-        Double min = rama*Math.PI*2 - Math.PI ;
-        Double max = min + Math.PI*2;
+        Double min = Math.PI*(rama*2 - 1);
+        Double max = Math.PI*(rama*2 + 1);
         Double ang = anguloNeutro();
         while(ang <= min) ang += Math.PI*2;
         while(ang > max) ang -= Math.PI*2;
         return new Complejo(Math.log(modulo()), ang);
     }
     
-    public Complejo aLa(int potencia) { return aLa(new Complejo(potencia)); }
+    public Complejo aLa(double potencia) { return aLa(new Complejo(potencia)); }
     public Complejo aLa(Complejo z) { return z.por(log()).Exp(); }
     public Complejo aLa(Complejo z, double rama){ return z.por(this.log(rama)).Exp(); }
     
     public Complejo Exp() { return new Complejo( Math.pow(Math.E, real) * Math.cos(imaginario) , Math.pow(Math.E, real) * Math.sin(imaginario) ); }
     public Complejo Exp(double base) { return Exp(new Complejo(base)); }
+    public Complejo Exp(double base, double rama) { return Exp(new Complejo(base), rama); }
     public Complejo Exp(Complejo base) { return base.aLa(this); }
+    public Complejo Exp(Complejo base, double rama) { return base.aLa(this, rama); }
     
     //---------------funciones trigonométricas e hiperbólicas-------------------
     
@@ -173,19 +175,31 @@ public class Complejo {
     public Complejo real(){ return new Complejo(real); }
     public Complejo imaginario(){ return new Complejo(0,imaginario); }
     
-    //-------------------------función para pintar------------------------------
-    public Color colorFondo(int[] alphas){
-        int pos = (int)((((Math.pow(Math.E, 8)*Math.log(modulo()+1))%alphas.length)/alphas.length)*alphas.length);
-        if(pos>384) return Color.WHITE;
-        else return Color.BLACK;
-    }
+    //------------------------funciones para pintar-----------------------------
     public Color colorCurvas(Color[] paleta, int[] alphas){
         
-        Color temp = paleta[ (int)((anguloPositivo()*(paleta.length-1))/(2*Math.PI))  ];
         int pos = (int)((((Math.pow(Math.E, 8)*Math.log(modulo()+1))%alphas.length)/alphas.length)*alphas.length);
-        int alpha = alphas[alphas.length - 1 - pos];
+        Color fondo = (pos > 384) ? Color.WHITE : Color.BLACK;
+        Color arg = paleta[ (int)((anguloPositivo()*(paleta.length-1))/(2*Math.PI))  ];
         
-        return new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), alpha);
+        double argR = arg.getRed() / 255d;
+        double argG = arg.getGreen() / 255d;
+        double argB = arg.getBlue() / 255d;
+        double argA = alphas[alphas.length - 1 - pos] / 255d;
+        
+        double fondoR = fondo.getRed() / 255d;
+        double fondoG = fondo.getGreen() / 255d;
+        double fondoB = fondo.getBlue() / 255d;
+        
+        double TargetR = ((1d - argA) * fondoR) + (argA * argR);
+        double TargetG = ((1d - argA) * fondoG) + (argA * argG);
+        double TargetB = ((1d - argA) * fondoB) + (argA * argB);
+        
+        return new Color(
+            (int)(TargetR * 255),
+            (int)(TargetG * 255),
+            (int)(TargetB * 255)
+        );
     }
     public Color colorHSL(){ return colorHSL(false); }
     public Color colorHSL(boolean switched) {

@@ -233,10 +233,6 @@ public class DibujarFuncionCompleja extends Thread {
     @Override
     public void run() {
         
-        // Create the buffer
-        BufferedImage image = new BufferedImage((int)areaPintar.getWidth(), (int)areaPintar.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D ig2 = image.createGraphics();
-        
         int x, y;
         for(y = 0; y < areaPintar.getHeight(); y++) for(x = 0; x < areaPintar.getWidth(); x++) {
             
@@ -244,23 +240,12 @@ public class DibujarFuncionCompleja extends Thread {
             
             Complejo valor = new Complejo(x1 + (double)x / pixelesXUnidad, y1 - (double)y / pixelesXUnidad);
             
-            Complejo func = valor.mas(2).entre(valor.menos(2)).aLa(new Complejo(1d/3d),r[0]/100d);
+            Complejo func = valor.log(r[0]/100d);
             
-            if(!col){
-                graficos.setColor(func.colorHSL(conmutado));
-                graficos.drawLine(x, y, x, y);
-            }
-            else{
-                
-                ig2.setColor(func.colorFondo(alphas));
-                ig2.drawLine(x, y, x, y);
-
-                ig2.setColor(func.colorCurvas(paleta,alphas));
-                ig2.drawLine(x, y, x, y);
-            }
+            if(!col) graficos.setColor(func.colorHSL(conmutado));
+            else graficos.setColor(func.colorCurvas(paleta,alphas));
             
+            graficos.drawLine(x, y, x, y);
         }
-        // Paint the buffer
-        graficos.drawImage(image, 0, 0, null);
     }
 }

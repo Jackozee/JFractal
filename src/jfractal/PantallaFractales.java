@@ -97,7 +97,6 @@ public class PantallaFractales extends JFrame {
         hiloDibujar.start();
     }
     
-    @SuppressWarnings("Convert2Lambda")
     private void Inicializar() {
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
