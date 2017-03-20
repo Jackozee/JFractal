@@ -97,6 +97,7 @@ public class PantallaFractales extends JFrame {
         hiloDibujar.start();
     }
     
+    @SuppressWarnings("Convert2Lambda")
     private void Inicializar() {
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -121,9 +122,7 @@ public class PantallaFractales extends JFrame {
                 if(e.getKeyCode() == KeyEvent.VK_PLUS) { iteraciones += e.isShiftDown() ? e.isControlDown() ? e.isAltDown() ? 500 : 50 : 10 : 1; repaint(); }
                 if(e.getKeyCode() == KeyEvent.VK_MINUS) { iteraciones -= e.isShiftDown() ? e.isControlDown() ? e.isAltDown() ? 500 : 50 : 10 : 1; repaint(); }
                 if(e.getKeyCode() == KeyEvent.VK_P) {
-
                     try {
-                        
                         setTitle(nombre + " - Guardando - " + String.valueOf(iteraciones) + " iteraciones" + " - R1 = " + String.valueOf(r[0]) + " R2 = " + String.valueOf(r[1]) + " R3 = " + String.valueOf(r[2]));
                         BufferedImage guardar = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
                         Thread hiloGuardar = new DibujarFuncionCompleja(guardar.createGraphics(), getSize(), x1, y1, pixelesXUnidad, iteraciones, r, paleta, alphas, col, conmutado);

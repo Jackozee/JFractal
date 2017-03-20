@@ -18,6 +18,7 @@ package jfractal;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.math.BigInteger;
 
 /**
  *
@@ -58,6 +59,14 @@ public class DibujarFuncionCompleja extends Thread {
         this.conmutado = conmutado;
     }
     
+    static long binomial(final long N, final long K) {
+        BigInteger ret = BigInteger.ONE;
+        for (int k = 0; k < K; k++) {
+            ret = ret.multiply(BigInteger.valueOf(N-k))
+                     .divide(BigInteger.valueOf(k+1));
+    }
+    return ret.intValue();
+}
     public static long CoeficienteBinomial(long t, long r){
         
         if(t==r || r==0) return 1;
@@ -79,7 +88,7 @@ public class DibujarFuncionCompleja extends Thread {
         for(c = 1; c <= iteraciones; c++) {
             if(Thread.currentThread().isInterrupted()) break;
             
-            termino = inicial.expReal((double)c).inverso();
+            termino = inicial.Exp((double)c).inverso();
             fin = fin.mas(termino);
         }
         
@@ -89,7 +98,7 @@ public class DibujarFuncionCompleja extends Thread {
     public static Complejo FuncionZetaRiemann(Complejo inicial, long iteraciones, Color[] paleta, int[] alphas) {
         
         Complejo factor;
-        factor = new Complejo(1).entre(new Complejo(1).menos(new Complejo(1).menos(inicial).expReal((double)2)));
+        factor = new Complejo(1).entre(new Complejo(1).menos(new Complejo(1).menos(inicial).Exp((double)2)));
         
         long n;
         long k;
@@ -103,7 +112,7 @@ public class DibujarFuncionCompleja extends Thread {
             for(k = 0; k <= n; k++){
                 
                 Complejo interior = new Complejo();
-                sum_in = sum_in.mas(interior.menos(inicial).expReal((double)k+1).por(new Complejo(Math.pow(-1,k) * CoeficienteBinomial(n,k))));
+                sum_in = sum_in.mas(interior.menos(inicial).Exp((double)k+1).por(new Complejo(Math.pow(-1,k) * CoeficienteBinomial(n,k))));
             }
             sum_ex = sum_ex.mas(sum_in.por(new Complejo(f)));
         }
@@ -115,71 +124,54 @@ public class DibujarFuncionCompleja extends Thread {
     public static Complejo FuncionMafufa1(Complejo z, long iteraciones, Color[] paleta, int[] alphas) {
         
         /*
-            Dibuja   (z^2 - 1)(z - 2 - i)^2
-                    ------------------------
-                        (z^2 + 2 + 2i)
+             (z^2 - 1)(z - 2 - i)^2
+            ------------------------
+                (z^2 + 2 + 2i)
                     
         */
         
         Complejo fin;
-        fin = z.aLa(2).menos(new Complejo(1)).por( z.menos(new Complejo(2,1)).aLa(2) ).entre( z.aLa(2).mas(new Complejo(2,2)) );
+        fin = z.aLa(2).menos(1).por( z.menos(new Complejo(2,1)).aLa(2) ).entre( z.aLa(2).mas(new Complejo(2,2)) );
         
         return fin;
     }
     
-    public static Complejo FuncionMafufa2(Complejo z, long iteraciones, Color[] paleta, int[] alphas) {
+    public static Complejo FuncionMafufa1Derivada(Complejo z, long iteraciones, Color[] paleta, int[] alphas) {
         
         /*
-            Dibuja   (z^2 - 1)(z - 2 - i)^2
-                    ------------------------
-                        (z^2 + 2 + 2i)
-                    
+            [z^4 + (4+4i)z^2 - (4+7i)z - (2+2i)] 2[z - (2+i)]
+             ------------------------
+                (z^2 + 2 + 2i)^2
+            
+            [a+b-c]d
+            --------
+               e
         */
         
-        Complejo fin;
-        fin = z.aLa(2).menos(new Complejo(1)).por( z.menos(new Complejo(2,1)).aLa(2) );
-        fin = fin.entre( z.aLa(2).mas(new Complejo(2,2)) );
+        Complejo a = z.aLa(4);
+        Complejo b = new Complejo(4,4).por(z.aLa(2));
+        Complejo c = new Complejo(4,7).por(z).mas(new Complejo(2,2));
+        Complejo d = z.menos(new Complejo(2,1)).por(2);
+        Complejo e = z.aLa(2).mas(new Complejo(2,2)).aLa(2);
         
-        return fin;
+        return a.mas(b).menos(c).por(d).entre(e);
     }
     
-    public static Complejo FuncionMafufa3(Complejo z, long iteraciones, Color[] paleta, int[] alphas) {
-        
-        Complejo fin;
-        
+    public static Complejo FuncionMafufa2(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
         
         /*
-            Dibuja   (z^2 + 2 + 2i)(z^3 + (-2-i)z^2  ))(z - 2 - i) + 
-                    ------------------------
-                        (z^2 + 2 + 2i)
-                    
-        */
-        
-        fin = z.aLa(2).mas(new Complejo(2,2));
-        fin = fin.por( z.aLa(3).mas( z.aLa(2).por(new Complejo(-2,-1)) ).menos(z).mas(new Complejo(2,1)) );
-        fin = fin.menos( z.menos(new Complejo(2,1)).aLa(2).por( z.aLa(3).menos(z) ) );
-        fin = fin.entre( z.aLa(4).mas( z.aLa(2).por(new Complejo(4,4)) ).mas(new Complejo(0,8)) );
-        fin = fin.por(new Complejo(2));
-        
-        return fin;
-    }
-    
-    public static Complejo FuncionMafufa4(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
-        
-        /* dibuja la función:
-         *   (z^2-i)    num = numerador
+         *   (z^2 - i)   num = numerador
          * -----------
          * 2(z^2 + i)  den = denominador
          */
         
-        Complejo num, den, fin;
-        num = z.aLa(2).menos(new Complejo(0,1));
-        den = z.aLa(2).mas(new Complejo(0,1)).por(new Complejo(2));
-        fin = num.entre(den);
-        return fin;
+        Complejo num, den;
+        num = z.aLa(2).menos(i);
+        den = z.aLa(2).mas(i).por(2);
+        return num.entre(den);
     }
     
-    public static Complejo FuncionMafufa4Derivada(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
+    public static Complejo FuncionMafufa2Derivada(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
         
         /* dibuja la función:
          *      2iz           num = numerador
@@ -187,16 +179,29 @@ public class DibujarFuncionCompleja extends Thread {
          *  (z^2 + i)^2       den = denominador
          */
         
-        Complejo fin, num, den;
-        
-        num = z.por(new Complejo(0,2));
-        den = z.aLa(2).mas(new Complejo(0,1)).aLa(2);
-        fin = num.entre(den);
-        
-        return fin;
+        Complejo num, den;
+        num = z.por(i).por(2);
+        den = z.aLa(2).mas(i).aLa(2);
+        return num.entre(den);
     }
     
-    public static Complejo FuncionMafufa5(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
+    public static Complejo FuncionMafufa2Derivada2(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
+        
+        /* dibuja la función:
+         *  - 6iz^2 - 2   num = numerador
+         * ------------- 
+         *  (z^2 + i)^3   den = denominador
+         */
+        
+        Complejo num, den;
+        
+        num = z.aLa(2).por(new Complejo(0,-6)).menos(2);
+        den = z.aLa(2).mas(i).aLa(3);
+        return num.entre(den);
+        
+    }
+    
+    public static Complejo FuncionMafufa3(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
         
         /* dibuja la función:
          *      2iz           num = numerador
@@ -204,64 +209,14 @@ public class DibujarFuncionCompleja extends Thread {
          *  (z^2 + i)^2       den = denominador
          */
         
-        Complejo fin, num, den;
-        
-        num = z.por(new Complejo(0,2));
-        den = z.aLa(2).mas(new Complejo(0,1)).aLa(2);
-        fin = num.entre(den);
-        fin = fin.menos(new Complejo(0.5));
-        
-        return fin;
+        Complejo num, den;
+        num = z.por(i).por(2);
+        den = z.aLa(2).mas(i).aLa(2);
+        return num.entre(den).menos(0.5);
     }
     
-    public static Complejo FuncionMafufa5Derivada(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
-        
-        /* dibuja la función:
-         *     -i8z          num = numerador
-         * ------------- 
-         *  (z^2 + i)^3       den = denominador
-         */
-        
-        Complejo fin, num, den;
-        
-        num = z.por(new Complejo(0,-8));
-        den = z.aLa(2).mas(i).aLa(3);
-        fin = num.entre(den);
-        
-        return fin;
-    }
     
-    public static Complejo FuncionMafufa6(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
-        
-        /* dibuja la función:
-         *      2z            num = numerador
-         * ------------- 
-         *  (z^2 + i)^2       den = denominador
-         */
-        
-        Complejo fin, num, den;
-        
-        num = z.por(new Complejo(2));
-        den = z.aLa(2).mas(new Complejo(0,1)).aLa(2);
-        fin = num.entre(den);
-        
-        return fin;
-    }
-    
-    public static Complejo FuncionMafufa7(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
-        
-        /* dibuja la función:
-         *      z^3 - 2z       num = numerador
-         */
-        
-        Complejo fin;
-        
-        fin = z.aLa(3).menos(z.por(new Complejo(2)));
-        
-        return fin;
-    }
-    
-    public static Complejo FuncionMafufa8(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
+    public static Complejo FuncionMafufa4(Complejo z, long iteraciones, Color[] paleta, int[] alphas){
         
         /* dibuja la función:
          *   z+1    num = numerador
@@ -269,13 +224,11 @@ public class DibujarFuncionCompleja extends Thread {
          *   z-1    den = denominador
          */
         
-        Complejo fin, num, den;
+        Complejo num, den;
         
-        num = z.mas(new Complejo(1));
-        den = z.menos(new Complejo(1));
-        fin = num.entre(den);
-        
-        return fin;
+        num = z.mas(1);
+        den = z.menos(1);
+        return num.entre(den);
     }
     @Override
     public void run() {
@@ -291,9 +244,7 @@ public class DibujarFuncionCompleja extends Thread {
             
             Complejo valor = new Complejo(x1 + (double)x / pixelesXUnidad, y1 - (double)y / pixelesXUnidad);
             
-            Complejo func;
-            
-            func = valor.inverso().sen();
+            Complejo func = valor.mas(2).entre(valor.menos(2)).aLa(new Complejo(1d/3d),r[0]/100d);
             
             if(!col){
                 graficos.setColor(func.colorHSL(conmutado));

@@ -67,6 +67,9 @@ public class Complejo {
     }
     
     //---------------------------funciones básicas------------------------------
+    
+    public Complejo inverso() { return new Complejo(real/(real*real + imaginario*imaginario), - imaginario/(real*real + imaginario*imaginario)); }
+    
     public Complejo mas(double a) { return mas(new Complejo(a)); }
     public Complejo mas(Complejo a) { return new Complejo(real + a.real, imaginario + a.imaginario); }
     public Complejo menos(double a) { return menos(new Complejo(a)); }
@@ -76,7 +79,26 @@ public class Complejo {
     public Complejo entre(double a) { return entre(new Complejo(a)); }
     public Complejo entre(Complejo a) { return this.por(a.inverso()); }
     
+    public Complejo log(){ return new Complejo(Math.log(modulo()), anguloNeutro()); }
+    public Complejo log(int rama){ return new Complejo(Math.log(modulo()), anguloNeutro() + 2 * Math.PI * rama); }
+    public Complejo log(Double rama){
+        Double min = rama*Math.PI*2 - Math.PI ;
+        Double max = min + Math.PI*2;
+        Double ang = anguloNeutro();
+        while(ang <= min) ang += Math.PI*2;
+        while(ang > max) ang -= Math.PI*2;
+        return new Complejo(Math.log(modulo()), ang);
+    }
+    
+    public Complejo aLa(int potencia) { return aLa(new Complejo(potencia)); }
+    public Complejo aLa(Complejo z) { return z.por(log()).Exp(); }
+    public Complejo aLa(Complejo z, double rama){ return z.por(this.log(rama)).Exp(); }
+    
     public Complejo Exp() { return new Complejo( Math.pow(Math.E, real) * Math.cos(imaginario) , Math.pow(Math.E, real) * Math.sin(imaginario) ); }
+    public Complejo Exp(double base) { return Exp(new Complejo(base)); }
+    public Complejo Exp(Complejo base) { return base.aLa(this); }
+    
+    //---------------funciones trigonométricas e hiperbólicas-------------------
     
     public Complejo sen() { return ( this.por(new Complejo(0,1)).Exp().menos(this.por(new Complejo(0,-1)).Exp()) ).entre(new Complejo(0,2)); }
     public Complejo cos() { return ( this.por(new Complejo(0,1)).Exp().mas(this.por(new Complejo(0,-1)).Exp()) ).entre(2); }
@@ -91,6 +113,8 @@ public class Complejo {
     public Complejo sech() { return cosh().inverso(); }
     public Complejo csch() { return senh().inverso(); }
     public Complejo coth() { return cosh().entre(senh()); }
+    
+    //------------------inversos de funciones trigonométricas-------------------
     
     public Complejo arcsen() { return arcsen(0,0); }
     public Complejo arcsen(double ramaRaiz, double ramaLog){
@@ -117,27 +141,33 @@ public class Complejo {
         return this.inverso().arctan(ramaLog);
     }
     
-    public Complejo expReal(Double a) {
-        if(a == 0) return new Complejo();
-        return new Complejo( Math.pow(Math.E, real * Math.log(a)) * Math.cos(imaginario * Math.log(a)) , Math.pow(Math.E, real * Math.log(a)) * Math.sin(imaginario * Math.log(a)) );
+    //------------------inversos de funciones trigonométricas-------------------
+    
+    public Complejo arcsenh() { return arcsenh(0,0); }
+    public Complejo arcsenh(double ramaRaiz, double ramaLog){
+        return this.aLa(2).mas(1).aLa(new Complejo(0.5), ramaRaiz).mas(this).log(ramaLog);
+    }
+    public Complejo arccosh() { return arccosh(0,0); }
+    public Complejo arccosh(double ramaRaiz, double ramaLog){
+        return this.aLa(2).menos(1).aLa(new Complejo(0.5), ramaRaiz).mas(this).log(ramaLog);
+    }
+    public Complejo arctanh() { return arctanh(0); }
+    public Complejo arctanh(double ramaLog){
+        return new Complejo(1).mas(this).entre(new Complejo(1).menos(this)).log(ramaLog).por(0.5);
+    }
+    public Complejo arccsch() { return arccsch(0,0); }
+    public Complejo arccsch(double ramaRaiz, double ramaLog){
+        return this.inverso().arcsenh(ramaRaiz, ramaLog);
+    }
+    public Complejo arcsech() { return arcsech(0,0); }
+    public Complejo arcsech(double ramaRaiz, double ramaLog){
+        return this.inverso().arccosh(ramaRaiz, ramaLog);
+    }
+    public Complejo arccoth() { return arccoth(0); }
+    public Complejo arccoth(double ramaLog){
+        return this.inverso().arctanh(ramaLog);
     }
     
-    public Complejo log(){ return new Complejo(Math.log(modulo()), anguloNeutro()); }
-    public Complejo log(int rama){ return new Complejo(Math.log(modulo()), anguloNeutro() + 2 * Math.PI * rama); }
-    public Complejo log(Double rama){
-        Double min = rama*Math.PI*2 - Math.PI ;
-        Double max = min + Math.PI*2;
-        Double ang = anguloNeutro();
-        while(ang <= min) ang += Math.PI*2;
-        while(ang > max) ang -= Math.PI*2;
-        return new Complejo(Math.log(modulo()), ang);
-    }
-    
-    public Complejo aLa(int potencia) { return aLa(new Complejo(potencia)); }
-    public Complejo aLa(Complejo z) { return z.por(log()).Exp(); }
-    public Complejo aLa(Complejo z, double rama){ return z.por(this.log(rama)).Exp(); }
-    
-    public Complejo inverso() { return new Complejo(real/(real*real + imaginario*imaginario), - imaginario/(real*real + imaginario*imaginario)); }
     //----------------------funciones de extracción-----------------------------
     
     public Complejo real(){ return new Complejo(real); }
